@@ -3,39 +3,51 @@ import matplotlib.pyplot as plt
 
 data = pd.read_csv('data.csv')
 
-data['km_scaled'] = (data['km'] - data['km'].mean()) / data['km'].std()
-data['price_scaled'] = (data['price'] - data['price'].mean()) / data['price'].std()
+#saving mean and std for normalization
+km_mean = data['km'].mean()
+km_std = data['km'].std()
+price_mean = data['price'].mean()
+price_std = data['price'].std()
 
-def gradient_descent(m_now, b_now, points, L):
-    m_gradient = 0
-    b_gradient = 0
 
+#x - xmin / (xmax - xmin)
+
+data['km'] = (data['km'] - km_mean) / km_std
+# data['km'] = data['km'] - data['km'].min() / (data['km'].max() - data['km'].min())
+# data['price']
+data['price'] = (data['price'] - price_mean) / price_std
+
+def gradient_descent(theta0, theta1, points, L):
     n = len(points)
 
-    for i in range(n):
-        x = points.iloc[i].km_scaled
-        y = points.iloc[i].price_scaled
-
-        m_gradient += -(2/n) * x * (y - (m_now * x + b_now)) #partial derivative of Error function with respect to m
-        b_gradient += -(2/n) * (y-(m_now * x + b_now)) #partial derivative of Error function with respect to b
+    tmp_theta0 = L * (1/n) * sum(theta0 + theta1 * points.iloc[i].km - points.iloc[i].price for i in range(n))
+    tmp_theta1 = L * (1/n) * sum((theta0 + theta1 * points.iloc[i].km - points.iloc[i].price) * points.iloc[i].km for i in range(n))
     #finding the opposite of the partial derivative / maximum value
-    m = m_now - m_gradient * L
-    b = b_now - b_gradient * L
-    return m, b
+    theta0 -= tmp_theta0
+    theta1 -= tmp_theta1
+    return theta0, theta1
 
-m = 0
-b = 0
-L = 0.01 
+def predict_price(mileage):
+    scaled_mileage = (mileage - km_mean) / km_std
+    price_scaled = theta0 + theta1 * scaled_mileage
+    price = price_scaled * price_std + price_mean
+    return price
+
+theta0 = 0 #intercept
+theta1 = 0 #slope
+L = 0.1 
 epochs = 1000
 
 for i in range(epochs):
-    m, b = gradient_descent(m, b, data, L)
-    if i % 100 == 0:
-        print(f"Epoch: {i}")
-print(m, b)
+    theta0, theta1 = gradient_descent(theta0, theta1, data, L)
 
-predicted_scaled = m * data['km_scaled'] + b
-predicted = predicted_scaled * data['price'].std() + data['price'].mean()
+print(theta0, theta1)
+
+predicted = theta0 + data['km'] * theta1
+
+input_mileage = float(input("Enter car mileage (in km): "))
+estimated_price = predict_price(input_mileage)
+print(f"Estimated price for a car with {input_mileage} km: €{estimated_price:.2f}")
 
 plt.scatter(data.km, data.price, color="black")
 plt.plot(data.km, predicted, color='red')
