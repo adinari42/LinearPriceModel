@@ -15,8 +15,13 @@ def load_model(path):
         sys.exit(1)
 
 
+
+
+#1:scaling down the input
+#2:linear regression equation: predicted_price = intercept + slope × mileage
+#3:scaling back up the output
 def predict_price(mileage, model):
-    scaled_km = (mileage - model["km_mean"]) / model["km_std"]
+    scaled_km = (mileage - model["km_mean"]) / model["km_std"] 
     price_scaled = model["theta0"] + model["theta1"] * scaled_km
     price = price_scaled * model["price_std"] + model["price_mean"]
     return price

@@ -58,13 +58,12 @@ def main():
         print("Error: Standard deviation is zero (invalid data).")
         sys.exit(1)
 
-    # Normalize
     data["km"] = (data["km"] - km_mean) / km_std
     data["price"] = (data["price"] - price_mean) / price_std
 
     theta0 = 0.0
     theta1 = 0.0
-    L = 0.1 #smaller lerning rate improves accuracy
+    L = 0.1
     epochs = 1000
 
     for _ in range(epochs):

@@ -59,9 +59,10 @@ x_scaled = (x − μ) / σ
 ## Gradient Descent
 
 **Error function (Mean Squared Error):**
-```
-J(θ) = (1 / n) Σ (ŷ − y)²
-```
+
+$$
+J({w,b})=\frac{1}{2m} \sum\limits_{i=0}^{m-1} \left[ f_{w,b}(x^{(i)}) \; - \; y^{(i)} \right]^2
+$$
 
 **Partial derivatives:**
 - `∂J/∂θ₀ = (1 / n) Σ (ŷ − y)`
@@ -69,7 +70,14 @@ J(θ) = (1 / n) Σ (ŷ − y)²
 
 **Update rule:**
 ```
-θ := θ − L · ∇J
+θ := θ − L · (∂J/∂θ)
+```
+
+Per-parameter examples:
+
+```
+w := w − L · (∂J/∂w)
+b := b − L · (∂J/∂b)
 ```
 
 Where L = learning rate, ∇J = gradient
