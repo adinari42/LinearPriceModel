@@ -1,4 +1,4 @@
-# Car_Price_Prediction
+# LinearPriceModel
 An implementation of linear regression for car price prediction
 
 ## Linear Regression with Gradient Descent (Car Price Estimator)
